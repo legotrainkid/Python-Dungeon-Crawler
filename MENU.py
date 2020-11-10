@@ -2,6 +2,8 @@ import arcade
 import arcade.gui
 import configparser
 
+import GAME
+
 class Button(arcade.gui.UIImageButton):
     def __init__(self, function ,x=0, y=0, normal_texture=None,
             hover_texture=None, press_texture=None, text="Button"):
@@ -20,9 +22,12 @@ class Button(arcade.gui.UIImageButton):
         pass
 
 class MainMenu(arcade.View):
-    def __init__(self):
+    def __init__(self, config):
         super().__init__()
+        
         self.ui_manager = arcade.gui.UIManager()
+
+        self.config = config
 
     def setup(self):
         normal = arcade.texture.load_texture(
@@ -57,7 +62,11 @@ class MainMenu(arcade.View):
         arcade.start_render()
 
     def play(self):
-        print("Loading Game")
+        game = GAME.Game(self.config)
+        self.window.show_view(game)
+
+    def on_hide_view(self):
+        self.ui_manager.unregister_handlers()
 
 def main():
     config = configparser.ConfigParser()
@@ -67,7 +76,7 @@ def main():
     title = config["init"]["title"]
     window = arcade.Window(width=width, height=height,
                            title=title)
-    view = MainMenu()
+    view = MainMenu(config)
     window.show_view(view)
     arcade.run()
 
