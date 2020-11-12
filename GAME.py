@@ -145,7 +145,3 @@ class Game(arcade.View):
         pos_x = tile[0] * 50
         pos_y = tile[1] * 50
         return [pos_x, pos_y]
-
-        
-
-               
