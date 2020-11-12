@@ -22,6 +22,13 @@ class Game(arcade.View):
         self.ARROW_DAMAGE = None
         self.paused = False
         self.physics_engine = None
+        self.all_sprites = arcade.SpriteList()
+        self.walls = arcade.SpriteList(use_spatial_hash=True)
+        self.tiles = arcade.SpriteList(use_spatial_hash=True)
+        self.enemies = arcade.SpriteList()
+        self.arrows = arcade.SpriteList()
+        self.tiles_list = arcade.SpriteList(use_spatial_hash=True)
+        self.player = None
 
     def setup(self):
         self.paused = False
@@ -92,28 +99,30 @@ class Game(arcade.View):
         self.player = ENTITIES.Player(30, 500, self.PLAYER_DAMAGE, self.SCREENSIZE)
 
         self.spawn_enemies(self.NUM_ENEMIES)
-        self.all_sprites.add(self.player)
+        self.all_sprites.append(self.player)
 
 
-    def on_show_view(self):
-        arcade.set_background_color(arcade.color.WHITE)
-        self.on_draw()
+    def on_show(self):
         self.setup()
 
     def on_draw(self):
         arcade.start_render()
+        arcade.set_background_color(arcade.color.BLACK)
+        self.tiles_list.draw()
+        self.player.draw()
         arcade.finish_render()
 
     def on_update(self, delta_time):
         if self.paused:
             return
+        self.all_sprites.update()
 
     def spawn_enemies(self, num):
         for i in range(num):
             pos = self.spawn_ent()
             enemy = ENTITIES.Enemy(pos, i, self.SCREENSIZE)
-            self.all_sprites.add(enemy)
-            self.enemies.add(enemy)
+            self.all_sprites.append(enemy)
+            self.enemies.append(enemy)
 
     def spawn_ent(self):
         tiles = self.spawnable_tiles()

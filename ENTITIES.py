@@ -36,7 +36,9 @@ class Player(arcade.Sprite):
         self.NORMAL_DMG = damage
         self.damage = damage
 
-    def update(self, move):
+        self.update_frames = 0
+
+    def update(self):
         if self.stamina < 1:
             self.sprint = False
             self.stamina = 0

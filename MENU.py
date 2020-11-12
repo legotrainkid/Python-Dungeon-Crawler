@@ -54,7 +54,7 @@ class MainMenu(arcade.View):
         )
         self.ui_manager.add_ui_element(button)
 
-    def on_show_view(self):
+    def on_show(self):
         self.setup()
         arcade.set_background_color(arcade.color.BLACK)
 
@@ -67,6 +67,7 @@ class MainMenu(arcade.View):
 
     def on_hide_view(self):
         self.ui_manager.unregister_handlers()
+        self.ui_manager.purge_ui_elements()
 
 def main():
     config = configparser.ConfigParser()
