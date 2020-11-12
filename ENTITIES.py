@@ -2,12 +2,10 @@ import arcade
 
 class Tile(arcade.Sprite):
     def __init__(self, texture, x, y, is_barrier, pos, SCREENSIZE):
-        super().__init__()
-
-        self.texture = texture
+        super().__init__(texture, 1)
         
-        self.x = x
-        self.y = y
+        self.center_x = x
+        self.center_y = y
         
         self.is_barrier = is_barrier
         
