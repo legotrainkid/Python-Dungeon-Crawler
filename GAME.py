@@ -101,7 +101,6 @@ class Game(arcade.View):
         self.spawn_enemies(self.NUM_ENEMIES)
         self.all_sprites.append(self.player)
 
-
     def on_show(self):
         self.setup()
 
@@ -110,7 +109,6 @@ class Game(arcade.View):
         arcade.set_background_color(arcade.color.BLACK)
         self.tiles_list.draw()
         self.player.draw()
-        arcade.finish_render()
 
     def on_update(self, delta_time):
         if self.paused:

@@ -18,9 +18,8 @@ class Tile(arcade.Sprite):
 
 class Player(arcade.Sprite):
     def __init__(self, health, stamina, damage, SCREENSIZE):
-        super().__init__()
+        super().__init__("resources/graphics/characters/Player/player.png", 1)
 
-        self.texture = arcade.texture.load_texture("resources/graphics/characters/Player/player.png")
 
         self.center_x = int(SCREENSIZE[0]/2-17.5)
         self.center_y = int(SCREENSIZE[1]/2-17.5)
