@@ -56,5 +56,8 @@ class Player(arcade.Sprite):
             self.update_frames = 0
 
 class Enemy(arcade.Sprite):
-    def __init__(self, pos, frame, SCREENSIZE):
-        super().__init__()
+    def __init__(self, pos, SCREENSIZE):
+        super().__init__("resources/graphics/characters/enemy.png", 1)
+
+        self.center_x = pos[0] + 10
+        self.center_y = pos[1] + 10

@@ -35,12 +35,14 @@ class Game(arcade.View):
         self.up_pressed = False
         self.down_pressed = False
 
+        self.enemy_physics = []
+
         self.setup()
 
-        self.LEFT_VIEWPORT_MARGIN = 250
-        self.RIGHT_VIEWPORT_MARGIN = 250
-        self.BOTTOM_VIEWPORT_MARGIN = 50
-        self.TOP_VIEWPORT_MARGIN = 100
+        self.LEFT_VIEWPORT_MARGIN = 600
+        self.RIGHT_VIEWPORT_MARGIN = 600
+        self.BOTTOM_VIEWPORT_MARGIN = 350
+        self.TOP_VIEWPORT_MARGIN = 350
 
         self.view_bottom = 0
         self.view_left = 0
@@ -51,7 +53,6 @@ class Game(arcade.View):
         self.SCREEN_WIDTH = self.window.width
         self.MOVE_SPEED = int(self.config["game"]["speed"])
         self.MAPSIZE = int(self.config["game"]["map_size"])
-        self.FPS = int(self.config["game"]["fps"])
         self.NUM_ENEMIES = int(self.config["game"]["num_of_enemies"])
         self.PLAYER_DAMAGE = int(self.config["game"]["player_damage"])
         self.ARROW_SPEED = int(self.config["game"]["arrow_speed"])
@@ -121,6 +122,8 @@ class Game(arcade.View):
 
         self.physics_engine = arcade.PhysicsEngineSimple(self.player, self.walls)
 
+        self.spawn_player()
+        
     def on_show(self):
         self.setup()
 
@@ -128,6 +131,7 @@ class Game(arcade.View):
         arcade.start_render()
         arcade.set_background_color(arcade.color.WHITE)
         self.tiles_list.draw()
+        self.enemies.draw()
         self.player.draw()
 
     def on_update(self, delta_time):
@@ -144,8 +148,14 @@ class Game(arcade.View):
             self.player.change_x = -self.MOVE_SPEED*delta_time
         elif self.right_pressed and not self.left_pressed:
             self.player.change_x = self.MOVE_SPEED*delta_time
+
+        for enemy in self.enemies:
+            enemy.change_x = 0
+            enemy.change_y = 0
             
         self.physics_engine.update()
+        for engine in self.enemy_physics:
+            engine.update()
 
         # --- Manage Scrolling ---
 
@@ -174,7 +184,7 @@ class Game(arcade.View):
         # Scroll down
         bottom_boundary = self.view_bottom + self.BOTTOM_VIEWPORT_MARGIN
         if self.player.bottom < bottom_boundary:
-            self.view_bottom -= bottom_boundary - self.player_.bottom
+            self.view_bottom -= bottom_boundary - self.player.bottom
             changed = True
 
         if changed:
@@ -192,33 +202,42 @@ class Game(arcade.View):
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed. """
 
-        if key == arcade.key.UP:
+        if key == arcade.key.W:
             self.up_pressed = True
-        elif key == arcade.key.DOWN:
+        elif key == arcade.key.S:
             self.down_pressed = True
-        elif key == arcade.key.LEFT:
+        elif key == arcade.key.A:
             self.left_pressed = True
-        elif key == arcade.key.RIGHT:
+        elif key == arcade.key.D:
             self.right_pressed = True
 
     def on_key_release(self, key, modifiers):
         """Called when the user releases a key. """
 
-        if key == arcade.key.UP:
+        if key == arcade.key.W:
             self.up_pressed = False
-        elif key == arcade.key.DOWN:
+        elif key == arcade.key.S:
             self.down_pressed = False
-        elif key == arcade.key.LEFT:
+        elif key == arcade.key.A:
             self.left_pressed = False
-        elif key == arcade.key.RIGHT:
+        elif key == arcade.key.D:
             self.right_pressed = False
 
     def spawn_enemies(self, num):
         for i in range(num):
             pos = self.spawn_ent()
-            enemy = ENTITIES.Enemy(pos, i, self.SCREENSIZE)
+            enemy = ENTITIES.Enemy(pos, self.SCREENSIZE)
             self.all_sprites.append(enemy)
             self.enemies.append(enemy)
+            engine = arcade.PhysicsEngineSimple(enemy, self.walls)
+            self.enemy_physics.append(engine)
+
+    def spawn_player(self):
+        for sprite in self.tiles_list:
+            if not sprite.is_barrier:
+                self.player.center_x = sprite.center_x
+                self.player.center_y = sprite.center_y
+                return
 
     def spawn_ent(self):
         tiles = self.spawnable_tiles()
